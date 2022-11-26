@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
 
-const PRIVATE_KEY = "1010FFFF";
+const PRIVATE_KEY = process.env.SECRET_KEY || "development";
 
 function validateToken(req: Request, res: Response, next: NextFunction) {
   const [, token] = req?.headers?.authorization?.split(" ") || [" ", " "];
@@ -9,7 +9,7 @@ function validateToken(req: Request, res: Response, next: NextFunction) {
   if (!token) res.status(401).send("Acesso negado! Nenhum token fornecido.");
 
   const payload = jsonwebtoken.verify(token, PRIVATE_KEY);
-  
+
   const userIdFromToken = typeof payload !== "string" && payload.user;
 
   if (!userIdFromToken) res.status(401).send("Acesso negado! Token inválido.");
