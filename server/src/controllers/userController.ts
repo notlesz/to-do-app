@@ -33,12 +33,6 @@ export default class UserController {
     };
   }
 
-  async countUsers() {
-    const count = await prisma.user.count();
-    return count;
-  
-  }
-
   async createUser(user: User) {
     const userCreated = await prisma.user.create({
       data: {
@@ -51,7 +45,7 @@ export default class UserController {
         profilePicture: true,
         createdAt: true,
         updatedAt: true,
-      }
+      },
     });
     return userCreated;
   }
