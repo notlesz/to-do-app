@@ -1,16 +1,16 @@
+import { Prisma } from "@prisma/client";
+import bcrypt from "bcrypt";
 import { Router } from "express";
-import { Prisma } from '@prisma/client'
 import jsonwebtoken from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import UserController from "../controllers/userController";
 import { PRIVATE_KEY } from "../middleware/auth";
 import { prisma } from "../prisma";
-import UserController from "../controllers/userController";
 
 const userController = new UserController();
 
 const publicRoute = Router();
 
-publicRoute.get("/login", async (req, res) => {
+publicRoute.post("/login", async (req, res) => {
   const [, hash] = req.headers.authorization?.split(" ") || [" ", " "];
   const [email, password] = Buffer.from(hash, "base64")?.toString()?.split(":");
 
@@ -23,10 +23,17 @@ publicRoute.get("/login", async (req, res) => {
 
     const verifyPassword = bcrypt.compareSync(password, user?.password!);
 
-    if (!verifyPassword) return res.status(401).send("E-mail ou senha incorreta!");
+    if (!verifyPassword)
+      return res.status(401).send("E-mail ou senha incorreta!");
 
     const userToken = jsonwebtoken.sign(
-      { user: JSON.stringify({ name: user?.name, email: user?.email, id: user?.id }) },
+      {
+        user: JSON.stringify({
+          name: user?.name,
+          email: user?.email,
+          id: user?.id,
+        }),
+      },
       PRIVATE_KEY,
       { expiresIn: "24h" }
     );
@@ -57,7 +64,6 @@ publicRoute.post("/user/register", async (req, res) => {
     });
 
     res.status(201).send(userCreated);
-
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -65,13 +71,6 @@ publicRoute.post("/user/register", async (req, res) => {
       }
     }
   }
-});
-
-publicRoute.get("/users/count", async (req, res) => {
-  const count = await userController.countUsers();
-  res.send({
-    count,
-  });
 });
 
 export default publicRoute;
