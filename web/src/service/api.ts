@@ -19,9 +19,15 @@ export const signIn = (
     }
   );
 
-export const signUp = (name: string, email: string, password: string) =>
+export const signUp = (
+  name: string,
+  email: string,
+  password: string
+): Promise<AxiosResponse> =>
   api.post("/user/register", {
     name,
     email,
     password,
   });
+
+export const getUserData = (): Promise<AxiosResponse> => api.get("/user");
