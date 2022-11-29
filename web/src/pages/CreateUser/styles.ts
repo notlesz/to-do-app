@@ -44,7 +44,7 @@ export const RegisterSubmitButton = styled(LoginSubmitButton)`
 `;
 
 export const BackToLogin = styled.p`
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 `;
 
@@ -54,4 +54,10 @@ export const BoxLoading = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
+`;
+
+export const ErrorMessage = styled.p`
+  color: ${({ theme }) => theme.colors.error};
+  font-size: 14px;
+  margin-left: 10px;
 `;

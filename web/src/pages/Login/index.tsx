@@ -1,16 +1,17 @@
 import { At, SignIn } from "phosphor-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageLogin from "../../assets/image_home.svg";
 import CustomInput from "../../components/CustomInput";
 import InputPassword from "../../components/InputPassword";
 import Loading from "../../components/Loading";
-import { useCredentials } from "../../hooks/useCredentials";
+import { AuthContext } from "../../context/authContext";
 import { validateEmail, validatePassword } from "../../utils/validators";
 import {
   BoxLoading,
   ContainerActions,
   CreateAccount,
+  ErrorMessage,
   LoginContainer,
   LoginForm,
   LoginMain,
@@ -30,7 +31,8 @@ interface Credentials {
 }
 
 export default function Login() {
-  const { loading, login } = useCredentials();
+  const { login, loading, errorMessage, clearMessage } =
+    useContext(AuthContext);
   const [userCredentials, setUserCredentials] = useState<Credentials>({
     email: "",
     password: "",
@@ -42,11 +44,11 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const verifyEmail = () => {
+  const verifyUser = () => {
     if (!userCredentials.isValidatedEmail) {
       setUserCredentials((state) => ({
         ...state,
-        textErrorEmail: "Invalid E-mail",
+        textErrorEmail: "Email inválido!",
       }));
     } else {
       setUserCredentials((state) => ({
@@ -54,13 +56,11 @@ export default function Login() {
         textErrorEmail: "",
       }));
     }
-  };
 
-  const verifyPassword = () => {
     if (!userCredentials.isValidatedPassword) {
       setUserCredentials((state) => ({
         ...state,
-        textErrorPassword: "Your password must contain at least 6 characters",
+        textErrorPassword: "Sua senha deve conter no mínimo 6 caracteres.",
       }));
     } else {
       setUserCredentials((state) => ({
@@ -79,6 +79,7 @@ export default function Login() {
   };
 
   const handleChangeValidatedEmail = () => {
+    clearMessage();
     setUserCredentials((state) => ({
       ...state,
       isValidatedEmail: validateEmail(state.email),
@@ -86,6 +87,7 @@ export default function Login() {
   };
 
   const handleChangeValidatedPassword = () => {
+    clearMessage();
     setUserCredentials((state) => ({
       ...state,
       isValidatedPassword: validatePassword(state.password),
@@ -113,9 +115,20 @@ export default function Login() {
   };
 
   useEffect(() => {
-    verifyEmail();
-    verifyPassword();
-  }, [userCredentials]);
+    if (!errorMessage) {
+      verifyUser();
+    } else {
+      setUserCredentials((state) => ({
+        ...state,
+        isValidatedEmail: false,
+        isValidatedPassword: false,
+      }));
+    }
+  }, [
+    userCredentials.isValidatedEmail,
+    userCredentials.isValidatedPassword,
+    errorMessage,
+  ]);
 
   return (
     <LoginMain>
@@ -128,7 +141,7 @@ export default function Login() {
         ) : (
           <LoginSection>
             <LoginTitle>To Do Dev</LoginTitle>
-            <LoginSubTitle className="subtitle">Sign In</LoginSubTitle>
+            <LoginSubTitle className="subtitle">Entrar</LoginSubTitle>
             <LoginForm onSubmit={onSubmitForm}>
               <CustomInput
                 startIcon={<At size={32} />}
@@ -146,11 +159,12 @@ export default function Login() {
                 handleChangeValidatedPassword={handleChangeValidatedPassword}
                 handleChangePassword={handleChangePassword}
                 textErrorPassword={userCredentials.textErrorPassword}
-                placeholder="Password"
+                placeholder="Senha"
               />
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <ContainerActions>
                 <CreateAccount onClick={() => navigate("/register")}>
-                  Create an account!
+                  Criar conta
                 </CreateAccount>
                 <LoginSubmitButton type="submit">
                   Login

@@ -1,15 +1,17 @@
 import { At, UserCircle, UserCirclePlus } from "phosphor-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImageNewUser from "../../assets/image_new_user.svg";
 import CustomInput from "../../components/CustomInput";
 import InputPassword from "../../components/InputPassword";
 import Loading from "../../components/Loading";
+import { AuthContext } from "../../context/authContext";
 import { validateEmail, validatePassword } from "../../utils/validators";
 import { ContainerActions } from "../Login/styles";
 import {
   BackToLogin,
   BoxLoading,
+  ErrorMessage,
   RegisterContainer,
   RegisterForm,
   RegisterMain,
@@ -35,6 +37,7 @@ interface NewUserCredentials {
 }
 
 export default function CreateUser() {
+  const { createUser, loading, errorMessage } = useContext(AuthContext);
   const [newUser, setNewUser] = useState<NewUserCredentials>({
     name: "",
     email: "",
@@ -49,7 +52,6 @@ export default function CreateUser() {
     textErrorPassword: "",
     textErrorRepeatedPassword: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -102,7 +104,7 @@ export default function CreateUser() {
     if (!newUser.isValidatedName) {
       setNewUser((state) => ({
         ...state,
-        textErrorName: "Your name must contain at least 5 characters",
+        textErrorName: "Seu nome deve conter no mínimo 5 caracteres.",
       }));
     } else {
       setNewUser((state) => ({
@@ -114,7 +116,7 @@ export default function CreateUser() {
     if (!newUser.isValidatedEmail) {
       setNewUser((state) => ({
         ...state,
-        textErrorEmail: "Invalid E-mail",
+        textErrorEmail: "Email inválido!",
       }));
     } else {
       setNewUser((state) => ({
@@ -126,7 +128,7 @@ export default function CreateUser() {
     if (!newUser.isValidatedPassword) {
       setNewUser((state) => ({
         ...state,
-        textErrorPassword: "Your password must contain at least 6 characters",
+        textErrorPassword: "Sua senha deve conter no mínimo 6 caracteres.",
       }));
     } else {
       setNewUser((state) => ({
@@ -139,7 +141,7 @@ export default function CreateUser() {
       setNewUser((state) => ({
         ...state,
         textErrorRepeatedPassword:
-          "Your password must contain at least 6 characters",
+          "Sua senha deve conter no mínimo 6 caracteres.",
       }));
     } else {
       setNewUser((state) => ({
@@ -156,13 +158,13 @@ export default function CreateUser() {
     } else {
       setNewUser((state) => ({
         ...state,
-        textErrorRepeatedPassword: "Passwords do not match",
+        textErrorRepeatedPassword: "Senhas não coincidem",
         isValidatedRepeatedPassword: false,
       }));
     }
   };
 
-  const onSubmitForm = (event: FormEvent) => {
+  const onSubmitForm = async (event: FormEvent) => {
     event.preventDefault();
     if (newUser.email.length === 0)
       setNewUser((state) => ({ ...state, isValidatedEmail: false }));
@@ -182,13 +184,29 @@ export default function CreateUser() {
       newUser.isValidatedRepeatedPassword &&
       newUser?.repeatedPassword?.length! > 0
     ) {
-      setLoading(true);
+      createUser(newUser.name, newUser.email, newUser.password);
     }
   };
 
   useEffect(() => {
-    verifyUser();
-  }, [newUser]);
+    if (!errorMessage) {
+      verifyUser();
+    } else {
+      setNewUser((state) => ({
+        ...state,
+        isValidatedEmail: false,
+        isValidatedName: false,
+        isValidatedPassword: false,
+        isValidatedRepeatedPassword: false,
+      }));
+    }
+  }, [
+    newUser.isValidatedEmail,
+    newUser.isValidatedName,
+    newUser.isValidatedPassword,
+    newUser.isValidatedRepeatedPassword,
+    errorMessage,
+  ]);
 
   return (
     <RegisterMain>
@@ -201,7 +219,7 @@ export default function CreateUser() {
         ) : (
           <RegisterSection>
             <RegisterTitle>To Do Dev</RegisterTitle>
-            <RegisterSubTitle>Sign Up</RegisterSubTitle>
+            <RegisterSubTitle>Criar conta</RegisterSubTitle>
             <RegisterForm onSubmit={onSubmitForm}>
               <CustomInput
                 startIcon={<UserCircle size={30} />}
@@ -209,7 +227,7 @@ export default function CreateUser() {
                 value={newUser.name}
                 handleChangeValue={handleChangeName}
                 handleChangeValidatedValue={handleChangeValidatedName}
-                placeholder="Your complete name"
+                placeholder="Seu nome completo"
                 textError={newUser.textErrorName}
                 type="text"
               />
@@ -229,7 +247,7 @@ export default function CreateUser() {
                 handleChangeValidatedPassword={handleChangeValidatedPassword}
                 handleChangePassword={handleChangePassword}
                 textErrorPassword={newUser.textErrorPassword}
-                placeholder="Password"
+                placeholder="Senha"
               />
               <InputPassword
                 isValidatedPassword={newUser.isValidatedRepeatedPassword!}
@@ -239,14 +257,13 @@ export default function CreateUser() {
                 }
                 handleChangePassword={handleChangeRepeatedPassword}
                 textErrorPassword={newUser.textErrorRepeatedPassword!}
-                placeholder="Repeat password"
+                placeholder="Repita sua senha"
               />
+              {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <ContainerActions>
-                <BackToLogin onClick={() => navigate("/")}>
-                  Back to login
-                </BackToLogin>
+                <BackToLogin onClick={() => navigate("/")}>Entrar</BackToLogin>
                 <RegisterSubmitButton type="submit">
-                  Create
+                  Criar
                   <UserCirclePlus size={30} />
                 </RegisterSubmitButton>
               </ContainerActions>
