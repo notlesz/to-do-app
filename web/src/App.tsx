@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
+import { AuthProvider } from "./context/authContext";
 import CreateUser from "./pages/CreateUser";
 import Login from "./pages/Login";
 import PrivateOutlet from "./pages/PrivateOutlet";
@@ -12,13 +13,15 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<CreateUser />} />
-          <Route path="/home" element={<PrivateOutlet />}>
-            <Route path="" element={<Home />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<CreateUser />} />
+            <Route path="/home" element={<PrivateOutlet />}>
+              <Route path="" element={<Home />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );
