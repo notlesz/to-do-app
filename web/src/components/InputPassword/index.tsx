@@ -1,14 +1,13 @@
 import { Eye, EyeSlash, Password } from "phosphor-react";
-import { useState } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { HelperTextError, Input } from "./styles";
 
-interface Props {
+interface Props extends InputHTMLAttributes<{}> {
   password: string;
   isValidatedPassword: boolean;
   handleChangePassword: (password: string) => void;
   handleChangeValidatedPassword: () => void;
   textErrorPassword: string;
-  placeholder: string;
 }
 
 export default function InputPassword({
