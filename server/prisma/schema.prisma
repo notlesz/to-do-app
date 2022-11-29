@@ -14,7 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id             Int      @id @default(autoincrement())
+  id             String      @id @default(uuid())
   name           String
   profilePicture String?
   email          String?  @unique
@@ -32,7 +32,7 @@ model Task {
   updatedAt   DateTime @updatedAt
   runtime     Int?
   status      StatusType @default(A_fazer)
-  ownerId     Int?
+  ownerId     String?
 
   owner User? @relation(fields: [ownerId], references: [id])
 }

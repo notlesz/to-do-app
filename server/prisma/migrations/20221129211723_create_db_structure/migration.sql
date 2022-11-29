@@ -3,7 +3,7 @@ CREATE TYPE "StatusType" AS ENUM ('A_fazer', 'Em_execucao', 'Feito');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "profilePicture" TEXT,
     "email" TEXT,
@@ -23,7 +23,7 @@ CREATE TABLE "Task" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "runtime" INTEGER,
     "status" "StatusType" NOT NULL DEFAULT 'A_fazer',
-    "ownerId" INTEGER,
+    "ownerId" TEXT,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );
