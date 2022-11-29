@@ -3,7 +3,7 @@ import { User } from "../@types/user";
 import { prisma } from "../prisma";
 
 export default class UserController {
-  async getUser(id: number) {
+  async getUser(id: string) {
     const userData = await prisma.user.findUnique({
       select: {
         id: true,
@@ -21,7 +21,7 @@ export default class UserController {
     return userData;
   }
 
-  async getAllUserTasks(id: number) {
+  async getAllUserTasks(id: string) {
     const allUserTasks = await prisma.task.findMany({
       where: {
         ownerId: id,
@@ -50,7 +50,7 @@ export default class UserController {
     return userCreated;
   }
 
-  async createUserTask(id: number, task: Task) {
+  async createUserTask(id: string, task: Task) {
     const createdTask = prisma.task.create({
       data: {
         ...task,
@@ -65,7 +65,7 @@ export default class UserController {
     return createdTask;
   }
 
-  async updateUser(id: number, user: User) {
+  async updateUser(id: string, user: User) {
     const updatedUser = await prisma.user.update({
       where: {
         id,
@@ -78,7 +78,7 @@ export default class UserController {
     return updatedUser;
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     await prisma.user.delete({
       where: {
         id,
