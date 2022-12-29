@@ -1,12 +1,13 @@
+import { useFormik } from "formik";
 import { At, SignIn } from "phosphor-react";
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 import ImageLogin from "../../assets/image_home.svg";
-import CustomInput from "../../components/CustomInput";
+import Input from "../../components/Input";
 import InputPassword from "../../components/InputPassword";
 import Loading from "../../components/Loading";
 import { AuthContext } from "../../context/authContext";
-import { validateEmail, validatePassword } from "../../utils/validators";
 import {
   BoxLoading,
   ContainerActions,
@@ -21,114 +22,26 @@ import {
   LoginTitle,
 } from "./styles";
 
-interface Credentials {
-  email: string;
-  password: string;
-  isValidatedEmail: boolean;
-  isValidatedPassword: boolean;
-  textErrorEmail: string;
-  textErrorPassword: string;
-}
-
 export default function Login() {
-  const { login, loading, errorMessage, clearMessage } =
-    useContext(AuthContext);
-  const [userCredentials, setUserCredentials] = useState<Credentials>({
-    email: "",
-    password: "",
-    isValidatedEmail: true,
-    isValidatedPassword: true,
-    textErrorEmail: "",
-    textErrorPassword: "",
+  const { login, loading, errorMessage } = useContext(AuthContext);
+
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string().email("Email inválido").required("Insira seu email"),
+      password: Yup.string()
+        .min(6, "Sua senha deve conter no mínimo 6 caracteres.")
+        .required("Insira sua senha."),
+    }),
+    onSubmit: ({ email, password }) => {
+      login(email, password);
+    },
   });
 
   const navigate = useNavigate();
-
-  const verifyUser = () => {
-    if (!userCredentials.isValidatedEmail) {
-      setUserCredentials((state) => ({
-        ...state,
-        textErrorEmail: "Email inválido!",
-      }));
-    } else {
-      setUserCredentials((state) => ({
-        ...state,
-        textErrorEmail: "",
-      }));
-    }
-
-    if (!userCredentials.isValidatedPassword) {
-      setUserCredentials((state) => ({
-        ...state,
-        textErrorPassword: "Sua senha deve conter no mínimo 6 caracteres.",
-      }));
-    } else {
-      setUserCredentials((state) => ({
-        ...state,
-        textErrorPassword: "",
-      }));
-    }
-  };
-
-  const handleChangeEmail = (email: string) => {
-    setUserCredentials((state) => ({ ...state, email }));
-  };
-
-  const handleChangePassword = (password: string) => {
-    setUserCredentials((state) => ({ ...state, password }));
-  };
-
-  const handleChangeValidatedEmail = () => {
-    clearMessage();
-    setUserCredentials((state) => ({
-      ...state,
-      isValidatedEmail: validateEmail(state.email),
-    }));
-  };
-
-  const handleChangeValidatedPassword = () => {
-    clearMessage();
-    setUserCredentials((state) => ({
-      ...state,
-      isValidatedPassword: validatePassword(state.password),
-    }));
-  };
-
-  const onSubmitForm = (event: FormEvent) => {
-    event.preventDefault();
-    if (userCredentials.email.length === 0)
-      setUserCredentials((state) => ({ ...state, isValidatedEmail: false }));
-    if (userCredentials.password.length === 0)
-      setUserCredentials((state) => ({
-        ...state,
-        isValidatedPassword: false,
-      }));
-
-    if (
-      userCredentials.isValidatedEmail &&
-      userCredentials.email.length > 0 &&
-      userCredentials.isValidatedPassword &&
-      userCredentials.password.length > 0
-    ) {
-      login(userCredentials.email, userCredentials.password);
-    }
-  };
-
-  useEffect(() => {
-    if (!errorMessage) {
-      verifyUser();
-    } else {
-      setUserCredentials((state) => ({
-        ...state,
-        isValidatedEmail: false,
-        isValidatedPassword: false,
-      }));
-    }
-  }, [
-    userCredentials.isValidatedEmail,
-    userCredentials.isValidatedPassword,
-    errorMessage,
-  ]);
 
   return (
     <LoginMain>
@@ -142,24 +55,27 @@ export default function Login() {
           <LoginSection>
             <LoginTitle>To Do Dev</LoginTitle>
             <LoginSubTitle className="subtitle">Entrar</LoginSubTitle>
-            <LoginForm onSubmit={onSubmitForm}>
-              <CustomInput
+            <LoginForm onSubmit={handleSubmit}>
+              <Input
                 startIcon={<At size={32} />}
-                isValidatedValue={userCredentials.isValidatedEmail}
-                value={userCredentials.email}
-                handleChangeValue={handleChangeEmail}
-                handleChangeValidatedValue={handleChangeValidatedEmail}
-                textError={userCredentials.textErrorEmail}
+                isValidatedValue={errors.email && touched.email ? false : true}
+                value={values.email}
+                onChange={handleChange}
+                textError={errors.email}
                 placeholder="Email"
+                name="email"
                 type="email"
+                id="email"
               />
               <InputPassword
-                isValidatedPassword={userCredentials.isValidatedPassword}
-                password={userCredentials.password}
-                handleChangeValidatedPassword={handleChangeValidatedPassword}
-                handleChangePassword={handleChangePassword}
-                textErrorPassword={userCredentials.textErrorPassword}
+                isValidatedPassword={
+                  errors.password && touched.password ? false : true
+                }
+                password={values.password}
+                onChange={handleChange}
+                textError={errors.password}
                 placeholder="Senha"
+                name="password"
               />
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <ContainerActions>

@@ -1,12 +1,13 @@
+import { useFormik } from "formik/dist";
 import { At, UserCircle, UserCirclePlus } from "phosphor-react";
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 import ImageNewUser from "../../assets/image_new_user.svg";
-import CustomInput from "../../components/CustomInput";
+import Input from "../../components/Input";
 import InputPassword from "../../components/InputPassword";
 import Loading from "../../components/Loading";
 import { AuthContext } from "../../context/authContext";
-import { validateEmail, validatePassword } from "../../utils/validators";
 import { ContainerActions } from "../Login/styles";
 import {
   BackToLogin,
@@ -21,192 +22,34 @@ import {
   RegisterTitle,
 } from "./styles";
 
-interface NewUserCredentials {
-  name: string;
-  email: string;
-  password: string;
-  repeatedPassword: string;
-  isValidatedName: boolean;
-  isValidatedEmail: boolean;
-  isValidatedPassword: boolean;
-  isValidatedRepeatedPassword: boolean;
-  textErrorName: string;
-  textErrorEmail: string;
-  textErrorPassword: string;
-  textErrorRepeatedPassword: string;
-}
-
 export default function CreateUser() {
   const { createUser, loading, errorMessage } = useContext(AuthContext);
-  const [newUser, setNewUser] = useState<NewUserCredentials>({
-    name: "",
-    email: "",
-    password: "",
-    repeatedPassword: "",
-    isValidatedName: true,
-    isValidatedEmail: true,
-    isValidatedPassword: true,
-    isValidatedRepeatedPassword: true,
-    textErrorName: "",
-    textErrorEmail: "",
-    textErrorPassword: "",
-    textErrorRepeatedPassword: "",
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      repeatedPassword: "",
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string()
+        .min(6, "Seu nome deve conter no mínimo 6 caracteres.")
+        .required("Insira seu nome completo."),
+      email: Yup.string().email("Email inválido").required("Insira seu email"),
+      password: Yup.string()
+        .min(6, "Sua senha deve conter no mínimo 6 caracteres.")
+        .required("Insira sua senha."),
+      repeatedPassword: Yup.string()
+        .min(6, "Sua senha deve conter no mínimo 6 caracteres.")
+        .oneOf([Yup.ref("password"), null], "Senhas não coincidem.")
+        .required("Insira sua senha."),
+    }),
+    onSubmit: ({ name, email, password }) => {
+      createUser(name, email, password);
+    },
   });
 
   const navigate = useNavigate();
-
-  const handleChangeName = (name: string) => {
-    setNewUser((state) => ({ ...state, name }));
-  };
-
-  const handleChangeEmail = (email: string) => {
-    setNewUser((state) => ({ ...state, email }));
-  };
-
-  const handleChangePassword = (password: string) => {
-    setNewUser((state) => ({ ...state, password }));
-  };
-
-  const handleChangeRepeatedPassword = (repeatedPassword: string) => {
-    setNewUser((state) => ({ ...state, repeatedPassword }));
-  };
-
-  const handleChangeValidatedName = () => {
-    setNewUser((state) => ({
-      ...state,
-      isValidatedName: state.name.length > 3,
-    }));
-  };
-
-  const handleChangeValidatedEmail = () => {
-    setNewUser((state) => ({
-      ...state,
-      isValidatedEmail: validateEmail(state.email),
-    }));
-  };
-
-  const handleChangeValidatedPassword = () => {
-    setNewUser((state) => ({
-      ...state,
-      isValidatedPassword: validatePassword(state.password),
-    }));
-  };
-
-  const handleChangeValidatedRepeatedPassword = () => {
-    setNewUser((state) => ({
-      ...state,
-      isValidatedRepeatedPassword: validatePassword(state.repeatedPassword),
-    }));
-    verifyBothPasswords();
-  };
-
-  const verifyUser = () => {
-    if (!newUser.isValidatedName) {
-      setNewUser((state) => ({
-        ...state,
-        textErrorName: "Seu nome deve conter no mínimo 5 caracteres.",
-      }));
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        textErrorName: "",
-      }));
-    }
-
-    if (!newUser.isValidatedEmail) {
-      setNewUser((state) => ({
-        ...state,
-        textErrorEmail: "Email inválido!",
-      }));
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        textErrorEmail: "",
-      }));
-    }
-
-    if (!newUser.isValidatedPassword) {
-      setNewUser((state) => ({
-        ...state,
-        textErrorPassword: "Sua senha deve conter no mínimo 6 caracteres.",
-      }));
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        textErrorPassword: "",
-      }));
-    }
-
-    if (!newUser.isValidatedRepeatedPassword) {
-      setNewUser((state) => ({
-        ...state,
-        textErrorRepeatedPassword:
-          "Sua senha deve conter no mínimo 6 caracteres.",
-      }));
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        textErrorRepeatedPassword: "",
-      }));
-      verifyBothPasswords();
-    }
-  };
-
-  const verifyBothPasswords = () => {
-    if (newUser.password === newUser.repeatedPassword) {
-      setNewUser((state) => ({ ...state, textErrorRepeatedPassword: "" }));
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        textErrorRepeatedPassword: "Senhas não coincidem",
-        isValidatedRepeatedPassword: false,
-      }));
-    }
-  };
-
-  const onSubmitForm = async (event: FormEvent) => {
-    event.preventDefault();
-    if (newUser.email.length === 0)
-      setNewUser((state) => ({ ...state, isValidatedEmail: false }));
-    if (newUser.password.length === 0)
-      setNewUser((state) => ({
-        ...state,
-        isValidatedPassword: false,
-      }));
-    if (newUser.repeatedPassword?.length === 0)
-      setNewUser((state) => ({ ...state, isValidatedRepeatedPassword: false }));
-
-    if (
-      newUser.isValidatedEmail &&
-      newUser.email.length > 0 &&
-      newUser.isValidatedPassword &&
-      newUser.password.length > 0 &&
-      newUser.isValidatedRepeatedPassword &&
-      newUser?.repeatedPassword?.length! > 0
-    ) {
-      createUser(newUser.name, newUser.email, newUser.password);
-    }
-  };
-
-  useEffect(() => {
-    if (!errorMessage) {
-      verifyUser();
-    } else {
-      setNewUser((state) => ({
-        ...state,
-        isValidatedEmail: false,
-        isValidatedName: false,
-        isValidatedPassword: false,
-        isValidatedRepeatedPassword: false,
-      }));
-    }
-  }, [
-    newUser.isValidatedEmail,
-    newUser.isValidatedName,
-    newUser.isValidatedPassword,
-    newUser.isValidatedRepeatedPassword,
-    errorMessage,
-  ]);
 
   return (
     <RegisterMain>
@@ -220,43 +63,47 @@ export default function CreateUser() {
           <RegisterSection>
             <RegisterTitle>To Do Dev</RegisterTitle>
             <RegisterSubTitle>Criar conta</RegisterSubTitle>
-            <RegisterForm onSubmit={onSubmitForm}>
-              <CustomInput
+            <RegisterForm onSubmit={handleSubmit}>
+              <Input
                 startIcon={<UserCircle size={30} />}
-                isValidatedValue={newUser.isValidatedName}
-                value={newUser.name}
-                handleChangeValue={handleChangeName}
-                handleChangeValidatedValue={handleChangeValidatedName}
+                isValidatedValue={errors.name && touched.name ? false : true}
+                value={values.name}
+                onChange={handleChange}
+                name="name"
                 placeholder="Seu nome completo"
-                textError={newUser.textErrorName}
+                textError={errors.name}
                 type="text"
               />
-              <CustomInput
+              <Input
                 startIcon={<At size={30} />}
-                isValidatedValue={newUser.isValidatedEmail}
-                value={newUser.email}
-                handleChangeValue={handleChangeEmail}
-                handleChangeValidatedValue={handleChangeValidatedEmail}
-                textError={newUser.textErrorEmail}
+                isValidatedValue={errors.email && touched.email ? false : true}
+                value={values.email}
+                onChange={handleChange}
+                name="email"
+                textError={errors.email}
                 placeholder="Email"
                 type="email"
               />
               <InputPassword
-                isValidatedPassword={newUser.isValidatedPassword}
-                password={newUser.password}
-                handleChangeValidatedPassword={handleChangeValidatedPassword}
-                handleChangePassword={handleChangePassword}
-                textErrorPassword={newUser.textErrorPassword}
+                isValidatedPassword={
+                  errors.password && touched.password ? false : true
+                }
+                password={values.password}
+                onChange={handleChange}
+                name="password"
+                textError={errors.password}
                 placeholder="Senha"
               />
               <InputPassword
-                isValidatedPassword={newUser.isValidatedRepeatedPassword!}
-                password={newUser.repeatedPassword!}
-                handleChangeValidatedPassword={
-                  handleChangeValidatedRepeatedPassword
+                isValidatedPassword={
+                  errors.repeatedPassword && touched.repeatedPassword
+                    ? false
+                    : true
                 }
-                handleChangePassword={handleChangeRepeatedPassword}
-                textErrorPassword={newUser.textErrorRepeatedPassword!}
+                password={values.repeatedPassword!}
+                onChange={handleChange}
+                name="repeatedPassword"
+                textError={errors.repeatedPassword}
                 placeholder="Repita sua senha"
               />
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
