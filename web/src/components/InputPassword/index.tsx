@@ -5,41 +5,35 @@ import { HelperTextError, Input } from "./styles";
 interface Props extends InputHTMLAttributes<{}> {
   password: string;
   isValidatedPassword: boolean;
-  handleChangePassword: (password: string) => void;
-  handleChangeValidatedPassword: () => void;
-  textErrorPassword: string;
+  textError?: string;
 }
 
 export default function InputPassword({
   password,
   isValidatedPassword,
-  textErrorPassword,
-  handleChangePassword,
-  handleChangeValidatedPassword,
+  textError,
+  onChange,
+  name,
   placeholder,
 }: Props) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div>
-      <Input
-        isValidated={isValidatedPassword}
-        onBlur={() => handleChangeValidatedPassword()}
-      >
+      <Input isValidated={isValidatedPassword}>
         <Password size={32} />
         <input
           type={showPassword ? "text" : "password"}
           placeholder={placeholder}
           value={password}
-          onChange={(event) => handleChangePassword(event.target.value)}
+          name={name}
+          onChange={onChange}
         />
         <span onClick={() => setShowPassword((state) => !state)}>
           {showPassword ? <EyeSlash size={32} /> : <Eye size={32} />}
         </span>
       </Input>
-      {!isValidatedPassword && (
-        <HelperTextError>{textErrorPassword}</HelperTextError>
-      )}
+      {!isValidatedPassword && <HelperTextError>{textError}</HelperTextError>}
     </div>
   );
 }

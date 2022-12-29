@@ -4,7 +4,7 @@ interface InputProps {
   isValidated: boolean;
 }
 
-export const Input = styled.div<InputProps>`
+export const CustomInput = styled.div<InputProps>`
   width: 443px;
   border-radius: 10px;
   display: flex;

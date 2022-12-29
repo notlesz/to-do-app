@@ -1,40 +1,34 @@
 import { InputHTMLAttributes, ReactNode } from "react";
-import { HelperTextError, Input } from "./styles";
+import { CustomInput, HelperTextError } from "./styles";
 
 interface Props extends InputHTMLAttributes<{}> {
   isValidatedValue: boolean;
-  handleChangeValue: (email: string) => void;
-  handleChangeValidatedValue: () => void;
   textError?: string;
   startIcon?: ReactNode;
 }
 
-export default function CustomInput({
+export default function Input({
   startIcon,
   value,
   isValidatedValue,
-  handleChangeValue,
-  handleChangeValidatedValue,
   textError,
   placeholder,
   type,
+  name,
+  onChange,
 }: Props) {
   return (
     <div>
-      <Input
-        isValidated={isValidatedValue}
-        onBlur={() => {
-          handleChangeValidatedValue && handleChangeValidatedValue();
-        }}
-      >
+      <CustomInput isValidated={isValidatedValue}>
         {startIcon}
         <input
           type={type}
+          name={name}
           placeholder={placeholder}
           value={value}
-          onChange={(event) => handleChangeValue(event.target.value)}
+          onChange={onChange}
         />
-      </Input>
+      </CustomInput>
       {!isValidatedValue && <HelperTextError>{textError}</HelperTextError>}
     </div>
   );
