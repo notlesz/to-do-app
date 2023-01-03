@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -16,10 +16,10 @@ async function main() {
   const task = await prisma.task.create({
     data: {
       title: "Tarefa 1",
-      description: "Testando",
+      description: "First Task",
       runtime: 30000,
       ownerId: user.id,
-      status: "A_fazer"
+      status: "A_fazer",
     },
   });
 }
