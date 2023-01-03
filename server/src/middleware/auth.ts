@@ -4,20 +4,28 @@ import jsonwebtoken from "jsonwebtoken";
 
 dotenv.config();
 
-const PRIVATE_KEY = process.env.SECRET_KEY || "development";
+const PRIVATE_KEY = process.env.SECRET_KEY!;
 
 function validateToken(req: Request, res: Response, next: NextFunction) {
   const [, token] = req?.headers?.authorization?.split(" ") || [" ", " "];
 
-  if (!token) res.status(401).send("Acesso negado! Nenhum token fornecido.");
+  if (!token) {
+    return res.status(401).send({
+      message: "Acesso negado! Nenhum token fornecido.",
+    });
+  }
 
   const payload = jsonwebtoken.verify(token, PRIVATE_KEY);
 
   const userIdFromToken = typeof payload !== "string" && payload.user;
 
-  if (!userIdFromToken) res.status(401).send("Acesso negado! Token inválido.");
+  if (!userIdFromToken) {
+    return res.status(401).send({
+      message: "Acesso negado! Token inválido.",
+    });
+  }
 
-  req.headers["user"] = userIdFromToken;
+  // req.headers["user"] = userIdFromToken;
 
   return next();
 }
