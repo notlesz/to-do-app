@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API || "",
+  baseURL: import.meta.env.VITE_API,
 });
 
 export const signIn = (
@@ -9,7 +9,7 @@ export const signIn = (
   password: string
 ): Promise<AxiosResponse> =>
   api.post(
-    "/login",
+    "/signin",
     {},
     {
       auth: {
@@ -24,10 +24,11 @@ export const signUp = (
   email: string,
   password: string
 ): Promise<AxiosResponse> =>
-  api.post("/user/register", {
+  api.post("/signup", {
     name,
     email,
     password,
   });
 
-export const getUserData = (): Promise<AxiosResponse> => api.get("/user");
+export const getUserData = (id: string): Promise<AxiosResponse> =>
+  api.get(`/user/${id}`);
