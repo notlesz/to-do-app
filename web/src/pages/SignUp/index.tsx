@@ -22,8 +22,8 @@ import {
   RegisterTitle,
 } from "./styles";
 
-export default function CreateUser() {
-  const { createUser, loading, errorMessage } = useContext(AuthContext);
+export default function SignUp() {
+  const { userRegister, loading, errorMessage } = useContext(AuthContext);
   const { values, errors, touched, handleChange, handleSubmit } = useFormik({
     initialValues: {
       name: "",
@@ -45,7 +45,7 @@ export default function CreateUser() {
         .required("Insira sua senha."),
     }),
     onSubmit: ({ name, email, password }) => {
-      createUser(name, email, password);
+      userRegister(name, email, password);
     },
   });
 

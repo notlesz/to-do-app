@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { At, SignIn } from "phosphor-react";
+import { At, SignIn as IconSignIn } from "phosphor-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -22,7 +22,7 @@ import {
   LoginTitle,
 } from "./styles";
 
-export default function Login() {
+export default function SignIn() {
   const { login, loading, errorMessage } = useContext(AuthContext);
 
   const { values, errors, touched, handleChange, handleSubmit } = useFormik({
@@ -84,7 +84,7 @@ export default function Login() {
                 </CreateAccount>
                 <LoginSubmitButton type="submit">
                   Login
-                  <SignIn size={30} />
+                  <IconSignIn size={30} />
                 </LoginSubmitButton>
               </ContainerActions>
             </LoginForm>
