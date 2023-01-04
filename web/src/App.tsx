@@ -1,10 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
+import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./context/authContext";
-import CreateUser from "./pages/CreateUser";
-import Login from "./pages/Login";
-import PrivateOutlet from "./pages/PrivateOutlet";
-import Home from "./pages/PrivateOutlet/Home";
+import { Home, SignIn, SignUp } from "./pages";
 import GlobalStyle from "./styles/GlobalStyle";
 import { theme } from "./styles/theme";
 
@@ -15,11 +13,16 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<CreateUser />} />
-            <Route path="/home" element={<PrivateOutlet />}>
-              <Route path="" element={<Home />} />
-            </Route>
+            <Route path="/" element={<SignIn />} />
+            <Route path="/register" element={<SignUp />} />
+            <Route
+              path="/home"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

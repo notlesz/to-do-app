@@ -6,7 +6,7 @@ import {
   LoginSubmitButton,
   LoginSubTitle,
   LoginTitle,
-} from "../Login/styles";
+} from "../SignIn/styles";
 
 export const RegisterMain = styled.main`
   min-height: 100vh;

@@ -8,7 +8,7 @@ import Input from "../../components/Input";
 import InputPassword from "../../components/InputPassword";
 import Loading from "../../components/Loading";
 import { AuthContext } from "../../context/authContext";
-import { ContainerActions } from "../Login/styles";
+import { ContainerActions } from "../SignIn/styles";
 import {
   BackToLogin,
   BoxLoading,
