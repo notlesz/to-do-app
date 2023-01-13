@@ -6,7 +6,6 @@ import publicRoute from "./publicRoute";
 const routes = express();
 
 routes.use("/", publicRoute);
-routes.use("*", validateToken);
-routes.use("/user", privateRoute);
+routes.use("/user", validateToken, privateRoute);
 
 export default routes;
