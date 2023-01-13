@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../@types/user";
-import { getUserData, signIn, signUp } from "../service/api";
+import { api, getUserData, signIn, signUp } from "../service/api";
 
 interface AuthContextProps {
   user: UserData | undefined;
@@ -29,12 +29,17 @@ function AuthProvider({ children }: { children: ReactNode }) {
   async function login(email: string, password: string) {
     try {
       setLoading(true);
-      const response = await signIn(email, password);
-      const { data } = await getUserData(response.data.user.id);
+      const response = await signIn(email, password).then((res) => {
+        api.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${res.data.token}`;
+        return res;
+      });
 
+      const { data } = await getUserData(response.data.user.id);
       setUser(data);
 
-      localStorage.setItem("token", JSON.stringify(response.data.token));
+      localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(data));
 
       navigate("/home");
@@ -75,9 +80,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
     if (recoveredUser) {
       setUser(JSON.parse(recoveredUser));
     }
-
     setErrorMessage(null);
   }, []);
+
   return (
     <AuthContext.Provider
       value={{
