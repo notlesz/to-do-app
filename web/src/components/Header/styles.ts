@@ -57,18 +57,37 @@ export const ContainerUser = styled.div`
   }
 `;
 
-export const MenuUser = styled.div<MenuUserProps>`
+export const MenuUser = styled.ul<MenuUserProps>`
   display: ${({ show }) => (show ? "flex" : "none !important")};
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
   position: absolute;
-  width: 250px;
-  padding: 20px;
+  width: 120px;
+  padding: 10px;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.colors.backgroundPrimary};
   top: 105%;
   right: 30px;
 
-  animation: ${({ show }) => (show ? "fadeIn" : "OutIn")} 0.5s ease-in-out;
+  & hr {
+    display: block;
+    height: 1px;
+    background-color: #c3c3c3;
+    width: 100%;
+  }
 
+  & li {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  animation: ${({ show }) => (show ? "fadeIn" : "OutIn")} 0.5s ease-in-out;
   @keyframes fadeIn {
     from {
       margin-bottom: 500px;

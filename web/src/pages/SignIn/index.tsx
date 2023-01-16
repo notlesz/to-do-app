@@ -23,7 +23,7 @@ import {
 } from "./styles";
 
 export default function SignIn() {
-  const { login, loading, errorMessage } = useContext(AuthContext);
+  const { login, loading, errorMessage, clearMessage } = useContext(AuthContext);
 
   const { values, errors, touched, handleChange, handleSubmit } = useFormik({
     initialValues: {
@@ -38,6 +38,7 @@ export default function SignIn() {
     }),
     onSubmit: ({ email, password }) => {
       login(email, password);
+      clearMessage();
     },
   });
 
@@ -46,15 +47,15 @@ export default function SignIn() {
   return (
     <LoginMain>
       <LoginContainer>
-        <img src={ImageLogin} alt="" />
+        <img src={ImageLogin} alt='' />
         {loading ? (
           <BoxLoading>
-            <Loading size="large" color="primary" />
+            <Loading size='large' color='primary' />
           </BoxLoading>
         ) : (
           <LoginSection>
             <LoginTitle>To Do Dev</LoginTitle>
-            <LoginSubTitle className="subtitle">Entrar</LoginSubTitle>
+            <LoginSubTitle className='subtitle'>Entrar</LoginSubTitle>
             <LoginForm onSubmit={handleSubmit}>
               <Input
                 startIcon={<At size={32} />}
@@ -62,27 +63,23 @@ export default function SignIn() {
                 value={values.email}
                 onChange={handleChange}
                 textError={errors.email}
-                placeholder="Email"
-                name="email"
-                type="email"
-                id="email"
+                placeholder='Email'
+                name='email'
+                type='email'
+                id='email'
               />
               <InputPassword
-                isValidatedPassword={
-                  errors.password && touched.password ? false : true
-                }
+                isValidatedPassword={errors.password && touched.password ? false : true}
                 password={values.password}
                 onChange={handleChange}
                 textError={errors.password}
-                placeholder="Senha"
-                name="password"
+                placeholder='Senha'
+                name='password'
               />
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <ContainerActions>
-                <CreateAccount onClick={() => navigate("/register")}>
-                  Criar conta
-                </CreateAccount>
-                <LoginSubmitButton type="submit">
+                <CreateAccount onClick={() => navigate("/register")}>Criar conta</CreateAccount>
+                <LoginSubmitButton type='submit'>
                   Login
                   <IconSignIn size={30} />
                 </LoginSubmitButton>
