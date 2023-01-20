@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 interface MenuUserProps {
@@ -26,12 +25,11 @@ export const HeaderContainer = styled.div`
   position: relative;
 `;
 
-export const LogoName = styled(Link)`
-  text-decoration: none;
-  color: ${({ theme }) => theme.colors.textSecondary};
-
-  h1 {
-    font-size: 28px;
+export const LogoName = styled.h1`
+  font-size: 24px;
+  a {
+    text-decoration: none;
+    color: ${({ theme }) => theme.colors.textSecondary};
   }
 `;
 

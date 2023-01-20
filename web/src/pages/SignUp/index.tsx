@@ -54,10 +54,10 @@ export default function SignUp() {
   return (
     <RegisterMain>
       <RegisterContainer>
-        <img src={ImageNewUser} alt="" />
+        <img src={ImageNewUser} alt='' />
         {loading ? (
           <BoxLoading>
-            <Loading size="large" color="primary" />
+            <Loading size='large' color='primary' />
           </BoxLoading>
         ) : (
           <RegisterSection>
@@ -69,47 +69,43 @@ export default function SignUp() {
                 isValidatedValue={errors.name && touched.name ? false : true}
                 value={values.name}
                 onChange={handleChange}
-                name="name"
-                placeholder="Seu nome completo"
+                name='name'
+                placeholder='Seu nome completo'
                 textError={errors.name}
-                type="text"
+                type='text'
               />
               <Input
                 startIcon={<At size={30} />}
                 isValidatedValue={errors.email && touched.email ? false : true}
                 value={values.email}
                 onChange={handleChange}
-                name="email"
+                name='email'
                 textError={errors.email}
-                placeholder="Email"
-                type="email"
+                placeholder='Email'
+                type='email'
               />
               <InputPassword
-                isValidatedPassword={
-                  errors.password && touched.password ? false : true
-                }
+                isValidatedPassword={errors.password && touched.password ? false : true}
                 password={values.password}
                 onChange={handleChange}
-                name="password"
+                name='password'
                 textError={errors.password}
-                placeholder="Senha"
+                placeholder='Senha'
               />
               <InputPassword
                 isValidatedPassword={
-                  errors.repeatedPassword && touched.repeatedPassword
-                    ? false
-                    : true
+                  errors.repeatedPassword && touched.repeatedPassword ? false : true
                 }
                 password={values.repeatedPassword!}
                 onChange={handleChange}
-                name="repeatedPassword"
+                name='repeatedPassword'
                 textError={errors.repeatedPassword}
-                placeholder="Repita sua senha"
+                placeholder='Repita sua senha'
               />
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
               <ContainerActions>
                 <BackToLogin onClick={() => navigate("/")}>Entrar</BackToLogin>
-                <RegisterSubmitButton type="submit">
+                <RegisterSubmitButton type='submit'>
                   Criar
                   <UserCirclePlus size={30} />
                 </RegisterSubmitButton>

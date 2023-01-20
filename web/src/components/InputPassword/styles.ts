@@ -11,12 +11,11 @@ export const Input = styled.div<InputProps>`
   align-items: center;
   gap: 10px;
   background-color: #fff;
-  padding: 10px 10px 10px 20px;
+  padding: 5px 10px 5px 20px;
   color: ${({ isValidated, theme }) =>
     isValidated ? theme.colors.textPrimary : theme.colors.error};
   border: 1px solid
-    ${({ isValidated, theme }) =>
-      isValidated ? "transparent" : theme.colors.error};
+    ${({ isValidated, theme }) => (isValidated ? "transparent" : theme.colors.error)};
   input {
     width: 100%;
     align-self: stretch;

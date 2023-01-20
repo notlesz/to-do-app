@@ -13,11 +13,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id             String      @id @default(uuid())
+  id             String   @id @default(uuid())
   name           String
   profilePicture String?
-  email          String  @unique
+  email          String   @unique
   password       String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -25,21 +26,18 @@ model User {
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   title       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  runtime     Int?
-  status      StatusType @default(A_fazer)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  status      StatusType @default(Pendente)
   ownerId     String?
 
   owner User? @relation(fields: [ownerId], references: [id])
 }
 
 enum StatusType {
-  A_fazer
-  Em_execucao
+  Pendente
   Feito
 }
-

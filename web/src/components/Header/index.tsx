@@ -1,5 +1,6 @@
 import { CaretDown, CaretUp, SignOut, UserCircle } from "phosphor-react";
 import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import Loading from "../Loading";
 import { ContainerUser, HeaderContainer, HeaderMain, LogoName, MenuUser } from "./styles";
@@ -10,8 +11,8 @@ export default function Header() {
   return (
     <HeaderMain>
       <HeaderContainer>
-        <LogoName to='/home'>
-          <h1>ToDoDev</h1>
+        <LogoName>
+          <Link to='/home'>ToDoDev</Link>
         </LogoName>
         <ContainerUser>
           <p>{user?.name}</p>
